@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Mindmap Builder</title>
+    <script>
+      // Initialize an array to store the nodes and edges of the mindmap.
+      let nodes = [];
+
+      // Initialize a variable to store the index of the selected node.
+      let selectedNodeIndex = -1;
+
+      // Initialize the canvas and set its dimensions.
+      let canvas = null;
+      let context = null;
+
+      function init() {
+        canvas = document.getElementById("canvas");
+        context = canvas.getContext("2d");
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // Add event listeners to the canvas.
+        canvas.addEventListener("mousedown", canvasClicked);
+        canvas.addEventListener("mousemove", canvasMoved);
+
+        // Add event listeners to the buttons.
+        document
+          .getElementById("addNodeButton")
+          .addEventListener("click", addNode);
+        document
+          .getElementById("deleteNodeButton")
+          .addEventListener("click", deleteNode);
+      }
+
+      function addNode() {
+        // Create a new node with some default properties.
+        let node = {
+          x: 100,
+          y: 100,
+          radius: 50,
+          color: "white",
+          text: "New Node",
+        };
+        nodes.push(node);
+
+        // Redraw the canvas.
+        draw();
+      }
+
+      function deleteNode() {
+        // Remove the selected node from the array.
+        if (selectedNodeIndex >= 0) {
+          nodes.splice(selectedNodeIndex, 1);
+          selectedNodeIndex = -1;
+
+          // Redraw the canvas.
+          draw();
+        }
+      }
+
+      function canvasClicked(event) {
+        // Check if a node was clicked.
+        let x = event.clientX - canvas.offsetLeft;
+        let y = event.clientY - canvas.offsetTop;
+        for (let i = 0; i < nodes.length; i++) {
+          let dx = x - nodes[i].x;
+          let dy = y - nodes[i].y;
+          let distance = Math.sqrt(dx * dx + dy * dy);
+          if (distance <= nodes[i].radius) {
+            // Select the node and store its index.
+            selectedNodeIndex = i;
+            draw();
+            return;
+          }
+        }
+
+        // Deselect any selected node.
+        selectedNodeIndex = -1;
+        draw();
+      }
+
+      function canvasMoved(event) {
+        // If a node is selected, move it to the new position.
+        if (selectedNodeIndex >= 0) {
+          nodes[selectedNodeIndex].x = event.clientX - canvas.offsetLeft;
+          nodes[selectedNodeIndex].y = event.clientY - canvas.offsetTop;
+          draw();
+        }
+      }
+
+      function draw() {
+        // Clear the canvas.
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw the nodes.  
+        for (let i = 0; i < nodes.length; i++) {
+          context.beginPath();
+          context.arc(nodes[i].x, nodes[i].y, nodes[i].radius, 0, Math.PI * 2);
+          context.fillStyle = nodes[i].color;
+          context.fill();
+
+          context.fillStyle = "black";
+          context.font = "14px Arial";
+          context.fillText(
+            nodes[i].text,
+            nodes[i].x - nodes[i].radius / 2,
+            nodes[i].y
+          );
+        }
+
+        // Draw the selected node.
+        if (selectedNodeIndex >= 0) {
+          context.beginPath();
+          context.arc(
+            nodes[selectedNodeIndex].x,
+            nodes[selectedNodeIndex].y,
+            nodes[selectedNodeIndex].radius + 5,
+            0,
+            Math.PI * 2
+          );
+          context.strokeStyle = "red";
+          context.lineWidth = 2;
+          context.stroke();
+        }
+      }
+    </script>
+  </head>
+  <body onload="init()">
+    <canvas id="canvas"></canvas>
+    <br />
+    <button id="addNodeButton">Add Node</button>
+    <button id="deleteNodeButton">Delete Node</button>
+  </body>
+</html>

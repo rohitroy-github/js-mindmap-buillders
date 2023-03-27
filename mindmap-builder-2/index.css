@@ -1,0 +1,260 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap');
+
+body {
+  padding: 0;
+  margin: 0;
+}
+
+.mainContainer {
+  /* position: relative; */
+  /* padding-top: 2%; */
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: row;
+}
+
+#drawingCanvas {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 80%;
+  height: 100%;
+  padding: 1%;
+  border: 3px solid black;
+  font-family: 'Montserrat', sans-serif;
+
+  /* background-image: linear-gradient(to right, black 0.1px, transparent 1px),
+    linear-gradient(to bottom, black 0.1px, transparent 1px);
+  background-size: 50px 50px;
+  background-position: 0 0, 0 0; */
+}
+
+.rect {
+  position: absolute;
+  border: 3px solid black;
+  background-color: lightgray;
+  z-index: 99;
+}
+
+#sidebar {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 20%;
+  height: 100%;
+  background-color: lightblue;
+  padding: 1%;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.functionButtons {
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  height: 20%;
+}
+
+.funcBtn {
+  cursor: pointer;
+  padding: 5px;
+  margin-bottom: 2px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+}
+
+.rectangleData {
+  height: 80%;
+  background-color: white;
+  color: black;
+  padding: 2%;
+}
+
+.rectangleData ul {
+  cursor: pointer;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.rectangleData h4 {
+  text-align: center;
+  margin: 0;
+}
+
+#rectList {
+  list-style-type: none;
+  padding: 0;
+}
+
+.selected {
+  border: 3px solid blue;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.draggingElement {
+  cursor: all-scroll;
+  z-index: 99;
+}
+
+li {
+  padding: 1%;
+}
+
+.htmlElementMenu {
+  justify-content: flex-start;
+  display: flex;
+  flex-direction: row;
+  height: 25%;
+  width: 100%;
+  /* padding-bottom: 1%; */
+}
+
+.col {
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.elementBtn {
+  cursor: pointer;
+  padding: 5%;
+  margin: 1%;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: bold;
+  font-size: 0.7rem;
+}
+
+/* ############################### */
+/* classesForHTMLElementsAddedUsingMenuList */
+/* ############################### */
+
+/* div */
+.newlyCreatedDivElement {
+  border: 3px solid black;
+  /* background-color: transparent; */
+  background-color: lightgray;
+  height: 100px;
+  width: 150px;
+}
+
+/* heading/h3 */
+.newlyCreatedHeadingElement {
+  font-weight: 800;
+  height: fit-content;
+  padding: 5px;
+  width: fit-content;
+}
+
+/* paragraph/p */
+.newlyCreatedParagraphElement {
+  font-weight: bold;
+  height: fit-content;
+  width: fit-content;
+  font-size: 15px;
+  color: black;
+  padding: 5px;
+}
+
+/* image */
+.newlyCreatedImageElement {
+  height: 100px;
+  width: 150px;
+  margin: 5px;
+}
+
+/* table */
+.newlyCreatedTableElement {
+  width: 200px;
+  height: 100px;
+  border-collapse: collapse;
+  border: 3px solid black;
+  background-color: transparent;
+}
+
+td {
+  padding: 5px;
+  font-size: 10px;
+  font-weight: 800;
+  border: 2px solid black;
+  background-color: white;
+}
+
+/* form */
+.newlyCreatedFormElement {
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+  height: fit-content;
+  border: 3px solid black;
+  /* display: none; */
+  /* margin: 5px; */
+  padding: 10px;
+  font-family: 'Montserrat', sans-serif;
+  background-color: transparent;
+}
+
+/* .newlyCreatedFormElement label {
+  display: block;
+  margin-bottom: 1px;
+  font-size: 10px;
+  font-family: 'Montserrat', sans-serif;
+} */
+
+/* .newlyCreatedFormElement input[type='text'],
+.newlyCreatedFormElement input[type='password'] {
+  align-items: center;
+  width: inherit;
+  padding: 5px;
+  margin-bottom: 5px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.newlyCreatedFormElement button {
+  padding: 2px 5px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+} */
+
+.newlyCreatedFormElement label {
+  display: block;
+  margin: 2px;
+  font-size: 12px;
+  font-weight: 800;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.newlyCreatedFormElement input[type='text'] {
+  display: block;
+  border: 2px solid black;
+  font-size: 12px;
+  font-weight: 800;
+  font-family: 'Montserrat', sans-serif;
+  padding: 5px;
+}
+
+.newlyCreatedFormElement button {
+  display: block;
+  margin-bottom: 10px;
+  border: 2px solid black;
+  font-weight: 800;
+  font-family: 'Montserrat', sans-serif;
+  padding: 5px;
+}
+
+/* ############################### */
+/* classesForHTMLElementsAddedUsingMenuList */
+/* ############################### */

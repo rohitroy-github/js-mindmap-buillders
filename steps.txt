@@ -1,0 +1,25 @@
+Step 1: Setting up the HTML and CSS
+
+First, create an HTML file that contains a canvas element and some basic CSS styles to position and style the canvas. The canvas element will be used to draw the mind map nodes and edges.
+
+Step 2: Drawing the Rectangular Nodes
+
+Create a JavaScript function that will draw a rectangular node on the canvas. This function should take parameters for the x and y coordinates, width, height, and text of the node. Use the canvas methods to draw a rectangle and add text to the node.
+
+Step 3: Adding Interactivity to the Nodes
+
+Add event listeners to the nodes so that they can be clicked and dragged around the canvas. When a node is clicked, it should be highlighted and able to be moved around the canvas. Use the canvas methods to redraw the nodes and edges when they are moved.
+
+Step 4: Drawing the Edges
+
+Create a JavaScript function that will draw an edge between two nodes. This function should take parameters for the starting node, ending node, and any additional styling for the edge. Use the canvas methods to draw a line between the two nodes.
+
+Step 5: Connecting the Nodes with Edges
+
+Add event listeners to the canvas that will allow the user to connect nodes with edges. When the user clicks on a node, it should become the starting node of the edge. When the user clicks on another node, it should become the ending node of the edge. Use the canvas methods to redraw the nodes and edges when they are connected.
+
+Step 6: Saving and Loading the Mind Map
+
+Add functionality to the mind map builder that allows the user to save and load their mind map. This can be done by serializing the mind map data into a JSON object and saving it to a file or a database. When the user loads the mind map, the data can be deserialized and used to redraw the nodes and edges.
+
+This is a high-level overview of the steps required to build an advanced mind map builder using JavaScript, HTML, CSS on a <canvas> element with both rectangular node and edge functionality. There are many different approaches you can take to implement these steps, and the details will depend on your specific requirements and design.

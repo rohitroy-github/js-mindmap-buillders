@@ -1,0 +1,97 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap');
+
+body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.container {
+  width: calc(100vw); /* subtract left and right padding */
+  height: calc(100vh); /* subtract top and bottom padding */
+  padding: 10px;
+  box-sizing: border-box;
+  /* border: 1px solid black; */
+
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+}
+
+.leftCanvasBar {
+  display: flex;
+  width: 90%;
+  box-sizing: border-box;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+}
+
+#mainCanvas {
+  position: relative;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: auto;
+  height: auto;
+  outline: 0;
+  /* 
+  width: 500px;
+  height: 500px;
+  border: 1px solid black; */
+}
+
+.rightSideBar {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  /* flex-wrap: wrap; */
+  border: 5px solid black;
+  width: 10%;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+/* btns */
+
+.btn {
+  display: flex;
+  padding: 10px;
+  border: 1px solid black;
+  margin: 5px;
+  text-align: center;
+  cursor: pointer;
+  width: auto;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+}
+
+.btn:hover {
+  background-color: rgb(219, 219, 219);
+}
+
+.node {
+  position: absolute;
+  border: 2px solid black;
+  background-color: white;
+  cursor: move;
+  user-select: none;
+  width: fit-content;
+  height: fit-content;
+  text-align: center;
+  padding: 10px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+}
+
+.selected {
+  border: 2px solid red;
+  background-color: rgb(219, 219, 219);
+}
