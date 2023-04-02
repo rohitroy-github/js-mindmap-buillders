@@ -144,6 +144,67 @@ function startDrag(event) {
     redrawSVGCanvas();
   }
 
+  // ifSelectedTarget === 'circle'
+  if (event.target.nodeName === "circle") {
+    console.log("entered-circle");
+
+    // Set the current rectangle element and its initial position
+    currentRect = event.target;
+    initialX = event.clientX;
+    initialY = event.clientY;
+    isDragging = true;
+
+    if (selection && selection !== currentRect) {
+      edges.push({
+        id: `${new Date().getTime()}`,
+        nodes: event.target.nodeName,
+        from: {
+          node: selection,
+          id: selection.id,
+          x: parseInt(selection.getAttribute("cx")),
+          y: parseInt(selection.getAttribute("cy")),
+          radius: parseInt(selection.getAttribute("r")),
+        },
+        to: {
+          node: currentRect,
+          id: currentRect.id,
+          x: parseInt(currentRect.getAttribute("cx")),
+          y: parseInt(currentRect.getAttribute("cy")),
+          radius: parseInt(currentRect.getAttribute("r")),
+        },
+        edgeSelected: false,
+      });
+
+      deselect();
+      selection = currentEdge;
+    }
+
+    selection = currentRect;
+    for (let i = 0; i < nodes.length; i++) {
+      if (nodes[i].id === selection.id) {
+        nodes[i].nodeSelected = "true";
+        break;
+      }
+    }
+    redrawSVGCanvas();
+  }
+
+  if (event.target.nodeName === "line") {
+    console.log("entered-edge");
+    currentEdge = event.target;
+    // ifAnEdgeIsSelected
+    // Highlight the clicked edge
+    selection = currentEdge;
+    selection.edgeSelected = true;
+    for (let i = 0; i < edges.length; i++) {
+      if (edges[i].id === currentEdge.id) {
+        edges[i].edgeSelected = "true";
+        break;
+      }
+    }
+    redrawSVGCanvas();
+  }
+
   if (event.target.nodeName === "svg") {
     console.log("entered-default");
 
@@ -198,29 +259,59 @@ function stopDrag(event) {
   // Set the isDragging flag to false
   isDragging = false;
 
-  const rectX = parseFloat(currentRect.getAttribute("x"));
-  const rectY = parseFloat(currentRect.getAttribute("y"));
-  const snappedX = Math.round(rectX / gridSize) * gridSize;
-  const snappedY = Math.round(rectY / gridSize) * gridSize;
+  if (event.target.nodeName == "circle") {
+    const newX =
+      Math.round(parseInt(currentRect.getAttribute("x")) / gridSize) * gridSize;
+    const newY =
+      Math.round(parseInt(currentRect.getAttribute("y")) / gridSize) * gridSize;
 
-  // Set the new position of the rectangle element
-  currentRect.setAttribute("x", snappedX);
-  currentRect.setAttribute("y", snappedY);
+    // Set the new position of the rectangle element
+    currentRect.setAttribute("x", newX);
+    currentRect.setAttribute("y", newY);
 
-  // update the node's position in the nodes array
-  const nodeIndex = nodes.findIndex((node) => node.node === currentRect);
-  nodes[nodeIndex].x = snappedX;
-  nodes[nodeIndex].y = snappedY;
+    // Update the node's position in the nodes array
+    const nodeIndex = nodes.findIndex((node) => node.node === currentRect);
+    nodes[nodeIndex].x = newX;
+    nodes[nodeIndex].y = newY;
 
-  // update the positions of edges in the edges array
-  for (let i = 0; i < edges.length; i++) {
-    const edge = edges[i];
-    if (edge.from.node === currentRect) {
-      edge.from.x = snappedX;
-      edge.from.y = snappedY;
-    } else if (edge.to.node === currentRect) {
-      edge.to.x = snappedX;
-      edge.to.y = snappedY;
+    // Update the positions of edges in the edges array
+    for (let i = 0; i < edges.length; i++) {
+      const edge = edges[i];
+      if (edge.from.node === currentRect) {
+        edge.from.x = newX;
+        edge.from.y = newY;
+      } else if (edge.to.node === currentRect) {
+        edge.to.x = newX;
+        edge.to.y = newY;
+      }
+    }
+  }
+
+  if (event.target.nodeName == "rect") {
+    const rectX = parseFloat(currentRect.getAttribute("x"));
+    const rectY = parseFloat(currentRect.getAttribute("y"));
+    const snappedX = Math.round(rectX / gridSize) * gridSize;
+    const snappedY = Math.round(rectY / gridSize) * gridSize;
+
+    // Set the new position of the rectangle element
+    currentRect.setAttribute("x", snappedX);
+    currentRect.setAttribute("y", snappedY);
+
+    // update the node's position in the nodes array
+    const nodeIndex = nodes.findIndex((node) => node.node === currentRect);
+    nodes[nodeIndex].x = snappedX;
+    nodes[nodeIndex].y = snappedY;
+
+    // update the positions of edges in the edges array
+    for (let i = 0; i < edges.length; i++) {
+      const edge = edges[i];
+      if (edge.from.node === currentRect) {
+        edge.from.x = snappedX;
+        edge.from.y = snappedY;
+      } else if (edge.to.node === currentRect) {
+        edge.to.x = snappedX;
+        edge.to.y = snappedY;
+      }
     }
   }
 
