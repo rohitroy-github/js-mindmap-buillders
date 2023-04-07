@@ -24,14 +24,15 @@ function addRect() {
     nodeSelected: false,
     node: rect,
     id: `${new Date().getTime()}`,
-    x: 30,
-    y: 30,
+    x: 50,
+    y: 50,
     width: 100,
     height: 60,
   };
 
   nodes.push(newNode);
 
+  // Redraw the SVG canvas
   redrawSVGCanvas();
 }
 // def : addANewNode/Rect END
@@ -217,6 +218,9 @@ function startDrag(event) {
 function drag(event) {
   // Prevent default behavior to prevent selecting text or images
   event.preventDefault();
+
+  showResizingCursors(event);
+
   // Check if the rectangle element is being dragged
   if (isDragging) {
     // Calculate the new position of the rectangle element
@@ -513,6 +517,40 @@ function redrawSVGCanvas() {
 
     // Add the rect element to the SVG element
     svg.appendChild(rect);
+
+    // Add resize circles on mouse enter
+    rect.addEventListener("mouseenter", function () {
+      let resizingHandlePositions = getResizingHandles(rect);
+
+      // Add the circles to the rect
+      resizingHandlePositions.forEach((pos) => {
+        var circle = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "circle"
+        );
+        circle.setAttribute("cx", pos.x);
+        circle.setAttribute("cy", pos.y);
+        circle.setAttribute("r", "5");
+        circle.setAttribute("fill", "white");
+        if (nodes[i].nodeSelected === "true") {
+          circle.setAttribute("stroke", "red");
+        } else {
+          circle.setAttribute("stroke", "black");
+        }
+        circle.setAttribute("stroke-width", "1");
+        circle.setAttribute("id", "resizingPoint");
+        svg.appendChild(circle);
+      });
+    });
+
+    // removeResizingHandlers
+    rect.addEventListener("mouseleave", function () {
+      // console.log("mouseleave");
+      let resizeCircles = svg.querySelectorAll("circle[id='resizingPoint']");
+      resizeCircles.forEach((circle) => {
+        svg.removeChild(circle);
+      });
+    });
   }
 
   // redrawCircleNodes
@@ -534,3 +572,63 @@ function redrawSVGCanvas() {
   }
 }
 // def/function : END
+
+// resizingModules
+
+// showResizingCursorsOnElementHover
+function showResizingCursors(event) {
+  const edgeSize = 10;
+  let hoveredElement = event.target;
+  // Get the rect element and its bounding box
+  const bbox = hoveredElement.getBBox();
+
+  if (hoveredElement.tagName == "rect") {
+    //GetRelativeMousePositions
+    const XFromHoveredElementX = event.clientX - bbox.x;
+    const YFromHoveredElementY = event.clientY - bbox.y;
+    // whichEdgeIsHovered?
+    const isLeft = XFromHoveredElementX < edgeSize;
+    const isRight = XFromHoveredElementX > bbox.width - edgeSize;
+    const isTop = YFromHoveredElementY < edgeSize;
+    const isBottom = YFromHoveredElementY > bbox.height - edgeSize;
+
+    // setCursorBasedOnEdge/CornerBeingHovered
+    if ((isTop && isLeft) || (isBottom && isRight)) {
+      hoveredElement.style.cursor = "nwse-resize";
+    } else if ((isTop && isRight) || (isBottom && isLeft)) {
+      hoveredElement.style.cursor = "nesw-resize";
+    } else if (isTop || isBottom) {
+      hoveredElement.style.cursor = "ns-resize";
+    } else if (isLeft || isRight) {
+      hoveredElement.style.cursor = "ew-resize";
+    } else {
+      hoveredElement.style.cursor = "move";
+    }
+  }
+}
+
+// getPositionsForResizeHandlers
+function getResizingHandles(element) {
+  if (element.tagName == "rect") {
+    let elementX = parseFloat(element.getAttribute("x"));
+    let elementY = parseFloat(element.getAttribute("y"));
+    let elementWidth = parseFloat(element.getAttribute("width"));
+    let elementHeight = parseFloat(element.getAttribute("height"));
+
+    // Calculate the positions of the resize circles
+    let resizingHandlePositions = [
+      {x: elementX, y: elementY}, // Top-left
+      {x: elementX + elementWidth / 2, y: elementY}, // Top-center
+      {x: elementX + elementWidth, y: elementY}, // Top-right
+      {x: elementX, y: elementY + elementHeight / 2}, // Left-center
+      {x: elementX + elementWidth, y: elementY + elementHeight / 2}, // Right-center
+      {x: elementX, y: elementY + elementHeight}, // Bottom-left
+      {x: elementX + elementWidth / 2, y: elementY + elementHeight}, // Bottom-center
+      {x: elementX + elementWidth, y: elementY + elementHeight}, // Bottom-right
+    ];
+
+    return resizingHandlePositions;
+  }
+}
+
+// resizingModules : END
