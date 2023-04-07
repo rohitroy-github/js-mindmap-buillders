@@ -79,7 +79,15 @@ parentSVG.addEventListener("mousedown", function (event) {
   // Check if the clicked element is a rectangle
   if (event.target.tagName == "rect") {
     selectedRect = event.target;
-    parentSVG.addEventListener("mousemove", elementResizingHandler);
+    const cursorOnEdge = isCursorNearEdge(event);
+    if (
+      cursorOnEdge.isLeft ||
+      cursorOnEdge.isRight ||
+      cursorOnEdge.isTop ||
+      cursorOnEdge.isBottom
+    ) {
+      parentSVG.addEventListener("mousemove", elementResizingHandler);
+    }
   }
 });
 
@@ -235,32 +243,51 @@ parentSVG.addEventListener("mouseup", function (event) {
 // functionToShowResizingCursors
 parentSVG.addEventListener("mousemove", showResizingCursors);
 function showResizingCursors(event) {
-  const edgeSize = 10;
   let hoveredElement = event.target;
-  // Get the rect element and its bounding box
-  const bbox = hoveredElement.getBBox();
 
   if (hoveredElement.tagName == "rect") {
-    //GetRelativeMousePositions
-    const XFromHoveredElementX = event.clientX - bbox.x;
-    const YFromHoveredElementY = event.clientY - bbox.y;
-    // whichEdgeIsHovered?
-    const isLeft = XFromHoveredElementX < edgeSize;
-    const isRight = XFromHoveredElementX > bbox.width - edgeSize;
-    const isTop = YFromHoveredElementY < edgeSize;
-    const isBottom = YFromHoveredElementY > bbox.height - edgeSize;
+    const cursorOnEdge = isCursorNearEdge(event);
 
-    // setCursorBasedOnEdge/CornerBeingHovered
-    if ((isTop && isLeft) || (isBottom && isRight)) {
+    if (
+      (cursorOnEdge.isTop && cursorOnEdge.isLeft) ||
+      (cursorOnEdge.isBottom && cursorOnEdge.isRight)
+    ) {
       hoveredElement.style.cursor = "nwse-resize";
-    } else if ((isTop && isRight) || (isBottom && isLeft)) {
+    } else if (
+      (cursorOnEdge.isTop && cursorOnEdge.isRight) ||
+      (cursorOnEdge.isBottom && cursorOnEdge.isLeft)
+    ) {
       hoveredElement.style.cursor = "nesw-resize";
-    } else if (isTop || isBottom) {
+    } else if (cursorOnEdge.isTop || cursorOnEdge.isBottom) {
       hoveredElement.style.cursor = "ns-resize";
-    } else if (isLeft || isRight) {
+    } else if (cursorOnEdge.isLeft || cursorOnEdge.isRight) {
       hoveredElement.style.cursor = "ew-resize";
     } else {
       hoveredElement.style.cursor = "move";
     }
   }
+}
+
+function isCursorNearEdge(event) {
+  let hoveredElement = event.target;
+  let result = {
+    isLeft: false,
+    isRight: false,
+    isTop: false,
+    isBottom: false,
+  };
+  if (hoveredElement.tagName == "rect") {
+    const edgeSize = 10;
+    // Get the rect element and its bounding box
+    const bbox = hoveredElement.getBBox();
+    //GetRelativeMousePositions
+    const XFromHoveredElementX = event.clientX - bbox.x;
+    const YFromHoveredElementY = event.clientY - bbox.y;
+    // whichEdgeIsHovered?
+    result.isLeft = XFromHoveredElementX < edgeSize;
+    result.isRight = XFromHoveredElementX > bbox.width - edgeSize;
+    result.isTop = YFromHoveredElementY < edgeSize;
+    result.isBottom = YFromHoveredElementY > bbox.height - edgeSize;
+  }
+  return result;
 }
