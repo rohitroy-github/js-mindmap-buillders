@@ -234,15 +234,6 @@ function drag(event) {
 
   showResizingCursors(event);
 
-  // checkIfDraggedfromNearEdge?
-  // const cursorOnEdge = isCursorNearEdge(event);
-
-  // if (
-  //   cursorOnEdge.isLeft ||
-  //   cursorOnEdge.isRight ||
-  //   cursorOnEdge.isTop ||
-  //   cursorOnEdge.isBottom
-  // ) {
   if (isDragging) {
     // Check if the rectangle element is being dragged
     // Calculate the new position of the rectangle element
@@ -340,11 +331,11 @@ function stopDrag(event) {
         edge.to.y = snappedY;
       }
     }
-
-    svg.removeEventListener("mousemove", elementResizingHandler);
-    // Reset the selectedRect variable
-    selectedRect = null;
   }
+
+  svg.removeEventListener("mousemove", elementResizingHandler);
+  // Reset the selectedRect variable
+  selectedRect = null;
 
   redrawSVGCanvas();
 }
@@ -678,21 +669,9 @@ function getResizingHandles(element) {
 }
 
 function elementResizingHandler(event) {
-  console.log("resizingEntered");
-  let selectedRectBBox = selectedRect.getBBox();
   // getCurrentMousePosition
   let mouseX = event.clientX;
   let mouseY = event.clientY;
-  // getGapFromMousePositionAndRectEdge
-  let selectedRectXGap = mouseX - selectedRectBBox.x;
-  let selectedRectYGap = mouseY - selectedRectBBox.y;
-
-  // Determine which edge or corner is being hovered on
-  const edgeSize = 10;
-  const isLeft = selectedRectXGap < edgeSize;
-  const isRight = selectedRectXGap > selectedRectBBox.width - edgeSize;
-  const isTop = selectedRectYGap < edgeSize;
-  const isBottom = selectedRectYGap > selectedRectBBox.height - edgeSize;
 
   // Get the initial rectangle position and dimensions
   let initialX = parseFloat(selectedRect.getAttribute("x"));
@@ -733,77 +712,57 @@ function elementResizingHandler(event) {
 
   switch (closestEdge) {
     case "left":
-      if (isLeft) {
-        // console.log("left");
-        newWidth = initialWidth + (initialX - mouseX);
-        newHeight = initialHeight;
-        newX = mouseX;
-        newY = initialY;
-        break;
-      }
+      console.log("left");
+      newWidth = initialWidth + (initialX - mouseX);
+      newHeight = initialHeight;
+      newX = mouseX;
+      newY = initialY;
+      break;
     case "right":
-      if (isRight) {
-        // console.log("right");
-        newWidth = mouseX - initialX;
-        newHeight = initialHeight;
-        newX = initialX;
-        newY = initialY;
-        break;
-      }
+      console.log("right");
+      newWidth = mouseX - initialX;
+      newHeight = initialHeight;
+      newX = initialX;
+      newY = initialY;
+      break;
     case "top":
-      if (isTop) {
-        // console.log("top");
-        newWidth = initialWidth;
-        newHeight = initialHeight + (initialY - mouseY);
-        newX = initialX;
-        newY = mouseY;
-        break;
-      }
+      console.log("top");
+      newWidth = initialWidth;
+      newHeight = initialHeight + (initialY - mouseY);
+      newX = initialX;
+      newY = mouseY;
+      break;
     case "bottom":
-      if (isBottom) {
-        // console.log("bottom");
-        newWidth = initialWidth;
-        newHeight = mouseY - initialY;
-        newX = initialX;
-        newY = initialY;
-        break;
-      }
+      console.log("bottom");
+      newWidth = initialWidth;
+      newHeight = mouseY - initialY;
+      newX = initialX;
+      newY = initialY;
+      break;
     case "topLeft":
-      if (isTop && isLeft) {
-        // console.log("topLeft");
-        newWidth = initialWidth + (initialX - mouseX);
-        newHeight = initialHeight + (initialY - mouseY);
-        newX = mouseX <= initialX ? mouseX : initialX;
-        newY = mouseY <= initialY ? mouseY : initialY;
-        break;
-      }
+      newWidth = initialWidth + (initialX - mouseX);
+      newHeight = initialHeight + (initialY - mouseY);
+      newX = mouseX <= initialX ? mouseX : initialX;
+      newY = mouseY <= initialY ? mouseY : initialY;
+      break;
     case "topRight":
-      if (isTop && isRight) {
-        // console.log("topRight");
-        newWidth = mouseX - initialX;
-        newHeight = initialHeight + (initialY - mouseY);
-        newX = initialX;
-        newY = mouseY;
-        break;
-      }
+      newWidth = mouseX - initialX;
+      newHeight = initialHeight + (initialY - mouseY);
+      newX = initialX;
+      newY = mouseY;
+      break;
     case "bottomLeft":
-      if (isBottom && isLeft) {
-        // console.log("bottomLeft");
-        newWidth = initialWidth + (initialX - mouseX);
-        newHeight = mouseY - initialY;
-        newX = mouseX;
-        newY = initialY;
-        break;
-      }
+      newWidth = initialWidth + (initialX - mouseX);
+      newHeight = mouseY - initialY;
+      newX = mouseX;
+      newY = initialY;
+      break;
     case "bottomRight":
-      if (isBottom && isRight) {
-        // console.log("bottomRight");
-        newWidth = mouseX - initialX;
-        newHeight = mouseY - initialY;
-        newX = initialX;
-        newY = initialY;
-        break;
-      }
+      newWidth = mouseX - initialX;
+      newHeight = mouseY - initialY;
+      newX = initialX;
+      newY = initialY;
+      break;
     default:
       newWidth = initialWidth;
       newHeight = initialHeight;
@@ -817,6 +776,14 @@ function elementResizingHandler(event) {
   selectedRect.setAttribute("height", newHeight);
   selectedRect.setAttribute("x", newX);
   selectedRect.setAttribute("y", newY);
+
+  const nodeIndex = nodes.findIndex((node) => node.node === selectedRect);
+  nodes[nodeIndex].x = newX;
+  nodes[nodeIndex].y = newY;
+  nodes[nodeIndex].width = newWidth;
+  nodes[nodeIndex].height = newHeight;
+
+  redrawSVGCanvas();
 }
 
 // resizingModules : END

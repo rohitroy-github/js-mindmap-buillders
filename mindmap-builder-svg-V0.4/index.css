@@ -83,7 +83,6 @@ body {
 rect {
   fill: white;
   stroke-width: 3;
-  cursor: move;
   position: absolute;
   /* rx: 5px;
   ry: 5px; */
