@@ -306,6 +306,8 @@ function stopDrag(event) {
   }
 
   if (event.target.nodeName == "rect") {
+    svg.removeEventListener("mousemove", elementResizingHandler);
+
     const rectX = parseFloat(currentRect.getAttribute("x"));
     const rectY = parseFloat(currentRect.getAttribute("y"));
     const snappedX = Math.round(rectX / gridSize) * gridSize;
@@ -333,7 +335,6 @@ function stopDrag(event) {
     }
   }
 
-  svg.removeEventListener("mousemove", elementResizingHandler);
   // Reset the selectedRect variable
   selectedRect = null;
 
@@ -602,7 +603,7 @@ function isCursorNearEdge(event) {
     isBottom: false,
   };
   if (hoveredElement.tagName == "rect") {
-    const edgeSize = 10;
+    const edgeSize = 15;
     // Get the rect element and its bounding box
     const bbox = hoveredElement.getBBox();
     //GetRelativeMousePositions
@@ -623,7 +624,6 @@ function showResizingCursors(event) {
 
   if (hoveredElement.tagName == "rect") {
     const cursorOnEdge = isCursorNearEdge(event);
-
     if (
       (cursorOnEdge.isTop && cursorOnEdge.isLeft) ||
       (cursorOnEdge.isBottom && cursorOnEdge.isRight)
@@ -670,14 +670,14 @@ function getResizingHandles(element) {
 
 function elementResizingHandler(event) {
   // getCurrentMousePosition
-  let mouseX = event.clientX;
-  let mouseY = event.clientY;
+  const mouseX = event.clientX;
+  const mouseY = event.clientY;
 
   // Get the initial rectangle position and dimensions
-  let initialX = parseFloat(selectedRect.getAttribute("x"));
-  let initialY = parseFloat(selectedRect.getAttribute("y"));
-  let initialWidth = parseFloat(selectedRect.getAttribute("width"));
-  let initialHeight = parseFloat(selectedRect.getAttribute("height"));
+  const initialX = parseFloat(selectedRect.getAttribute("x"));
+  const initialY = parseFloat(selectedRect.getAttribute("y"));
+  const initialWidth = parseFloat(selectedRect.getAttribute("width"));
+  const initialHeight = parseFloat(selectedRect.getAttribute("height"));
 
   // Calculate the distances from the mouse position to each edge and corner
   let distances = {
