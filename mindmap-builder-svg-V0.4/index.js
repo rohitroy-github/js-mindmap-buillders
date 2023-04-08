@@ -28,6 +28,7 @@ function addRect() {
     y: 50,
     width: 100,
     height: 60,
+    shape: "rectangle",
   };
 
   nodes.push(newNode);
@@ -52,6 +53,7 @@ function addSquare() {
     y: 50,
     width: 60,
     height: 60,
+    shape: "square",
   };
 
   nodes.push(newNode);
@@ -77,6 +79,7 @@ function addCircle() {
     x: 75,
     y: 75,
     radius: 30,
+    shape: "circle",
   };
 
   nodes.push(newNode);
@@ -761,6 +764,84 @@ function elementResizingHandler(event) {
   // getCurrentMousePosition
   const mouseX = event.clientX;
   const mouseY = event.clientY;
+
+  // checkingWhichShapeIsSelected?
+  const nodeIndex = nodes.findIndex((node) => node.node === selectedElement);
+  selectedShape = nodes[nodeIndex].shape;
+  console.log(selectedShape);
+
+  if (selectedShape == "square") {
+    const initialX = parseFloat(selectedElement.getAttribute("x"));
+    const initialY = parseFloat(selectedElement.getAttribute("y"));
+    const initialSize = parseFloat(selectedElement.getAttribute("width"));
+
+    // Calculate the distances from the mouse position to each edge and corner
+    let distances = {
+      topLeft: Math.sqrt(
+        Math.pow(mouseX - initialX, 2) + Math.pow(mouseY - initialY, 2)
+      ),
+      topRight: Math.sqrt(
+        Math.pow(mouseX - (initialX + initialSize), 2) +
+          Math.pow(mouseY - initialY, 2)
+      ),
+      bottomLeft: Math.sqrt(
+        Math.pow(mouseX - initialX, 2) +
+          Math.pow(mouseY - (initialY + initialSize), 2)
+      ),
+      bottomRight: Math.sqrt(
+        Math.pow(mouseX - (initialX + initialSize), 2) +
+          Math.pow(mouseY - (initialY + initialSize), 2)
+      ),
+    };
+
+    // Find the edge or corner closest to the mouse position
+    let closestEdge = Object.keys(distances).reduce((a, b) =>
+      distances[a] < distances[b] ? a : b
+    );
+
+    // Calculate the new square size based on the closest edge or corner
+    let newSize, newX, newY;
+
+    switch (closestEdge) {
+      case "topLeft":
+        newSize = initialSize + (initialX - mouseX);
+        newX = mouseX <= initialX ? mouseX : initialX;
+        newY = mouseY <= initialY ? mouseY : initialY;
+        break;
+      case "topRight":
+        newSize = mouseX - initialX;
+        newX = initialX;
+        newY = mouseY <= initialY ? mouseY : initialY;
+        break;
+      case "bottomLeft":
+        newSize = initialSize + (initialX - mouseX);
+        newX = mouseX <= initialX ? mouseX : initialX;
+        newY = initialY;
+        break;
+      case "bottomRight":
+        newSize = mouseX - initialX;
+        newX = initialX;
+        newY = initialY;
+        break;
+      default:
+        newSize = initialSize;
+        newX = initialX;
+        newY = initialY;
+        break;
+    }
+
+    // Update the new size and position of the square element
+    selectedElement.setAttribute("width", newSize);
+    selectedElement.setAttribute("height", newSize);
+    selectedElement.setAttribute("x", newX);
+    selectedElement.setAttribute("y", newY);
+
+    const nodeIndex = nodes.findIndex((node) => node.node === selectedElement);
+    nodes[nodeIndex].x = newX;
+    nodes[nodeIndex].y = newY;
+    nodes[nodeIndex].width = newSize;
+    nodes[nodeIndex].height = newSize;
+  }
 
   if (selectedElement.nodeName == "rect") {
     // Get the initial rectangle position and dimensions
