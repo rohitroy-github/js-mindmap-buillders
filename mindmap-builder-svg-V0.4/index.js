@@ -94,7 +94,7 @@ let currentEdge = null;
 let initialX;
 let initialY;
 
-let selectedRect = null;
+let selectedElement = null;
 
 function startDrag(event) {
   // Prevent default behavior to prevent selecting text or images
@@ -104,7 +104,7 @@ function startDrag(event) {
   if (event.target.nodeName === "rect") {
     console.log("entered-rect");
 
-    selectedRect = event.target;
+    selectedElement = event.target;
     const cursorOnEdge = isCursorNearEdge(event);
     if (
       cursorOnEdge.isLeft ||
@@ -161,46 +161,56 @@ function startDrag(event) {
   // ifSelectedTarget === 'circle'
   if (event.target.nodeName === "circle") {
     console.log("entered-circle");
+    selectedElement = event.target;
+    const cursorOnEdge = isCursorNearEdge(event);
+    if (
+      cursorOnEdge.isLeft ||
+      cursorOnEdge.isRight ||
+      cursorOnEdge.isTop ||
+      cursorOnEdge.isBottom
+    ) {
+      svg.addEventListener("mousemove", elementResizingHandler);
+    } else {
+      // Set the current rectangle element and its initial position
+      currentRect = event.target;
+      initialX = event.clientX;
+      initialY = event.clientY;
+      isDragging = true;
 
-    // Set the current rectangle element and its initial position
-    currentRect = event.target;
-    initialX = event.clientX;
-    initialY = event.clientY;
-    isDragging = true;
+      if (selection && selection !== currentRect) {
+        edges.push({
+          id: `${new Date().getTime()}`,
+          nodes: event.target.nodeName,
+          from: {
+            node: selection,
+            id: selection.id,
+            x: parseInt(selection.getAttribute("cx")),
+            y: parseInt(selection.getAttribute("cy")),
+            radius: parseInt(selection.getAttribute("r")),
+          },
+          to: {
+            node: currentRect,
+            id: currentRect.id,
+            x: parseInt(currentRect.getAttribute("cx")),
+            y: parseInt(currentRect.getAttribute("cy")),
+            radius: parseInt(currentRect.getAttribute("r")),
+          },
+          edgeSelected: false,
+        });
 
-    if (selection && selection !== currentRect) {
-      edges.push({
-        id: `${new Date().getTime()}`,
-        nodes: event.target.nodeName,
-        from: {
-          node: selection,
-          id: selection.id,
-          x: parseInt(selection.getAttribute("cx")),
-          y: parseInt(selection.getAttribute("cy")),
-          radius: parseInt(selection.getAttribute("r")),
-        },
-        to: {
-          node: currentRect,
-          id: currentRect.id,
-          x: parseInt(currentRect.getAttribute("cx")),
-          y: parseInt(currentRect.getAttribute("cy")),
-          radius: parseInt(currentRect.getAttribute("r")),
-        },
-        edgeSelected: false,
-      });
-
-      deselect();
-      selection = currentEdge;
-    }
-
-    selection = currentRect;
-    for (let i = 0; i < nodes.length; i++) {
-      if (nodes[i].id === selection.id) {
-        nodes[i].nodeSelected = "true";
-        break;
+        deselect();
+        selection = currentEdge;
       }
+
+      selection = currentRect;
+      for (let i = 0; i < nodes.length; i++) {
+        if (nodes[i].id === selection.id) {
+          nodes[i].nodeSelected = "true";
+          break;
+        }
+      }
+      redrawSVGCanvas();
     }
-    redrawSVGCanvas();
   }
 
   if (event.target.nodeName === "line") {
@@ -278,6 +288,8 @@ function stopDrag(event) {
   isDragging = false;
 
   if (event.target.nodeName == "circle") {
+    svg.removeEventListener("mousemove", elementResizingHandler);
+
     const newX =
       Math.round(parseInt(currentRect.getAttribute("x")) / gridSize) * gridSize;
     const newY =
@@ -335,8 +347,8 @@ function stopDrag(event) {
     }
   }
 
-  // Reset the selectedRect variable
-  selectedRect = null;
+  // Reset the selectedElement variable
+  selectedElement = null;
 
   redrawSVGCanvas();
 }
@@ -588,8 +600,42 @@ function redrawSVGCanvas() {
 
     // Add the rect element to the SVG element
     svg.appendChild(circle);
+
+    circle.addEventListener("mouseenter", function () {
+      let resizingHandlePositions = getResizingHandles(circle);
+
+      // Add the circles to the rect
+      resizingHandlePositions.forEach((pos) => {
+        var circle = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "circle"
+        );
+        circle.setAttribute("cx", pos.x);
+        circle.setAttribute("cy", pos.y);
+        circle.setAttribute("r", "5");
+        circle.setAttribute("fill", "white");
+        if (nodes[i].nodeSelected === "true") {
+          circle.setAttribute("stroke", "red");
+        } else {
+          circle.setAttribute("stroke", "black");
+        }
+        circle.setAttribute("stroke-width", "1");
+        circle.setAttribute("id", "resizingPoint");
+        svg.appendChild(circle);
+      });
+    });
+
+    // Remove resize circles on mouse leave
+    circle.addEventListener("mouseleave", function () {
+      // console.log("mouseleave");
+      let resizeCircles = svg.querySelectorAll("circle[id='resizingPoint']");
+      resizeCircles.forEach((circle) => {
+        svg.removeChild(circle);
+      });
+    });
   }
 }
+
 // def/function : END
 
 // resizingModules : START
@@ -615,6 +661,23 @@ function isCursorNearEdge(event) {
     result.isTop = YFromHoveredElementY < edgeSize;
     result.isBottom = YFromHoveredElementY > bbox.height - edgeSize;
   }
+  if (hoveredElement.tagName == "circle") {
+    const edgeSize = 15;
+    const bbox = hoveredElement.getBBox();
+    // Get the position of the cursor relative to the center of the circle
+    const relX = event.clientX - (bbox.x + bbox.width / 2);
+    const relY = event.clientY - (bbox.y + bbox.height / 2);
+    // Calculate the distance from the center of the circle to the cursor position
+    const distanceFromCenter = Math.sqrt(relX * relX + relY * relY);
+    // Check if the distance is within the edge size
+    if (distanceFromCenter < bbox.width / 2 + edgeSize) {
+      // Check which edge is being hovered over
+      result.isLeft = relX < -bbox.width / 2 + edgeSize;
+      result.isRight = relX > bbox.width / 2 - edgeSize;
+      result.isTop = relY < -bbox.height / 2 + edgeSize;
+      result.isBottom = relY > bbox.height / 2 - edgeSize;
+    }
+  }
   return result;
 }
 
@@ -635,6 +698,17 @@ function showResizingCursors(event) {
     ) {
       hoveredElement.style.cursor = "nesw-resize";
     } else if (cursorOnEdge.isTop || cursorOnEdge.isBottom) {
+      hoveredElement.style.cursor = "ns-resize";
+    } else if (cursorOnEdge.isLeft || cursorOnEdge.isRight) {
+      hoveredElement.style.cursor = "ew-resize";
+    } else {
+      hoveredElement.style.cursor = "move";
+    }
+  }
+  if (hoveredElement.tagName == "circle") {
+    const cursorOnEdge = isCursorNearEdge(event);
+
+    if (cursorOnEdge.isTop || cursorOnEdge.isBottom) {
       hoveredElement.style.cursor = "ns-resize";
     } else if (cursorOnEdge.isLeft || cursorOnEdge.isRight) {
       hoveredElement.style.cursor = "ew-resize";
@@ -666,6 +740,21 @@ function getResizingHandles(element) {
 
     return resizingHandlePositions;
   }
+  if (element.tagName === "circle") {
+    let elementX = parseFloat(element.getAttribute("cx"));
+    let elementY = parseFloat(element.getAttribute("cy"));
+    let elementRadius = parseFloat(element.getAttribute("r"));
+
+    // Calculate the positions of the resize circles
+    let resizingHandlePositions = [
+      {x: elementX - elementRadius, y: elementY}, // Left
+      {x: elementX + elementRadius, y: elementY}, // Right
+      {x: elementX, y: elementY - elementRadius}, // Top
+      {x: elementX, y: elementY + elementRadius}, // Bottom
+    ];
+
+    return resizingHandlePositions;
+  }
 }
 
 function elementResizingHandler(event) {
@@ -673,115 +762,140 @@ function elementResizingHandler(event) {
   const mouseX = event.clientX;
   const mouseY = event.clientY;
 
-  // Get the initial rectangle position and dimensions
-  const initialX = parseFloat(selectedRect.getAttribute("x"));
-  const initialY = parseFloat(selectedRect.getAttribute("y"));
-  const initialWidth = parseFloat(selectedRect.getAttribute("width"));
-  const initialHeight = parseFloat(selectedRect.getAttribute("height"));
+  if (selectedElement.nodeName == "rect") {
+    // Get the initial rectangle position and dimensions
+    const initialX = parseFloat(selectedElement.getAttribute("x"));
+    const initialY = parseFloat(selectedElement.getAttribute("y"));
+    const initialWidth = parseFloat(selectedElement.getAttribute("width"));
+    const initialHeight = parseFloat(selectedElement.getAttribute("height"));
 
-  // Calculate the distances from the mouse position to each edge and corner
-  let distances = {
-    left: mouseX - initialX,
-    right: initialX + initialWidth - mouseX,
-    top: mouseY - initialY,
-    bottom: initialY + initialHeight - mouseY,
-    topLeft: Math.sqrt(
-      Math.pow(mouseX - initialX, 2) + Math.pow(mouseY - initialY, 2)
-    ),
-    topRight: Math.sqrt(
-      Math.pow(mouseX - (initialX + initialWidth), 2) +
-        Math.pow(mouseY - initialY, 2)
-    ),
-    bottomLeft: Math.sqrt(
-      Math.pow(mouseX - initialX, 2) +
-        Math.pow(mouseY - (initialY + initialHeight), 2)
-    ),
-    bottomRight: Math.sqrt(
-      Math.pow(mouseX - (initialX + initialWidth), 2) +
-        Math.pow(mouseY - (initialY + initialHeight), 2)
-    ),
-  };
+    // Calculate the distances from the mouse position to each edge and corner
+    let distances = {
+      left: mouseX - initialX,
+      right: initialX + initialWidth - mouseX,
+      top: mouseY - initialY,
+      bottom: initialY + initialHeight - mouseY,
+      topLeft: Math.sqrt(
+        Math.pow(mouseX - initialX, 2) + Math.pow(mouseY - initialY, 2)
+      ),
+      topRight: Math.sqrt(
+        Math.pow(mouseX - (initialX + initialWidth), 2) +
+          Math.pow(mouseY - initialY, 2)
+      ),
+      bottomLeft: Math.sqrt(
+        Math.pow(mouseX - initialX, 2) +
+          Math.pow(mouseY - (initialY + initialHeight), 2)
+      ),
+      bottomRight: Math.sqrt(
+        Math.pow(mouseX - (initialX + initialWidth), 2) +
+          Math.pow(mouseY - (initialY + initialHeight), 2)
+      ),
+    };
 
-  // Find the edge or corner closest to the mouse position
-  let closestEdge = Object.keys(distances).reduce((a, b) =>
-    distances[a] < distances[b] ? a : b
-  );
+    // Find the edge or corner closest to the mouse position
+    let closestEdge = Object.keys(distances).reduce((a, b) =>
+      distances[a] < distances[b] ? a : b
+    );
 
-  // Calculate the new rectangle dimensions based on the closest edge or corner
-  let newWidth, newHeight, newX, newY;
+    // Calculate the new rectangle dimensions based on the closest edge or corner
+    let newWidth, newHeight, newX, newY;
 
-  switch (closestEdge) {
-    case "left":
-      console.log("left");
-      newWidth = initialWidth + (initialX - mouseX);
-      newHeight = initialHeight;
-      newX = mouseX;
-      newY = initialY;
-      break;
-    case "right":
-      console.log("right");
-      newWidth = mouseX - initialX;
-      newHeight = initialHeight;
-      newX = initialX;
-      newY = initialY;
-      break;
-    case "top":
-      console.log("top");
-      newWidth = initialWidth;
-      newHeight = initialHeight + (initialY - mouseY);
-      newX = initialX;
-      newY = mouseY;
-      break;
-    case "bottom":
-      console.log("bottom");
-      newWidth = initialWidth;
-      newHeight = mouseY - initialY;
-      newX = initialX;
-      newY = initialY;
-      break;
-    case "topLeft":
-      newWidth = initialWidth + (initialX - mouseX);
-      newHeight = initialHeight + (initialY - mouseY);
-      newX = mouseX <= initialX ? mouseX : initialX;
-      newY = mouseY <= initialY ? mouseY : initialY;
-      break;
-    case "topRight":
-      newWidth = mouseX - initialX;
-      newHeight = initialHeight + (initialY - mouseY);
-      newX = initialX;
-      newY = mouseY;
-      break;
-    case "bottomLeft":
-      newWidth = initialWidth + (initialX - mouseX);
-      newHeight = mouseY - initialY;
-      newX = mouseX;
-      newY = initialY;
-      break;
-    case "bottomRight":
-      newWidth = mouseX - initialX;
-      newHeight = mouseY - initialY;
-      newX = initialX;
-      newY = initialY;
-      break;
-    default:
-      newWidth = initialWidth;
-      newHeight = initialHeight;
-      newX = initialX;
-      newY = initialY;
-      break;
+    switch (closestEdge) {
+      case "left":
+        // console.log("left");
+        newWidth = initialWidth + (initialX - mouseX);
+        newHeight = initialHeight;
+        newX = mouseX;
+        newY = initialY;
+        break;
+      case "right":
+        // console.log("right");
+        newWidth = mouseX - initialX;
+        newHeight = initialHeight;
+        newX = initialX;
+        newY = initialY;
+        break;
+      case "top":
+        // console.log("top");
+        newWidth = initialWidth;
+        newHeight = initialHeight + (initialY - mouseY);
+        newX = initialX;
+        newY = mouseY;
+        break;
+      case "bottom":
+        // console.log("bottom");
+        newWidth = initialWidth;
+        newHeight = mouseY - initialY;
+        newX = initialX;
+        newY = initialY;
+        break;
+      case "topLeft":
+        newWidth = initialWidth + (initialX - mouseX);
+        newHeight = initialHeight + (initialY - mouseY);
+        newX = mouseX <= initialX ? mouseX : initialX;
+        newY = mouseY <= initialY ? mouseY : initialY;
+        break;
+      case "topRight":
+        newWidth = mouseX - initialX;
+        newHeight = initialHeight + (initialY - mouseY);
+        newX = initialX;
+        newY = mouseY;
+        break;
+      case "bottomLeft":
+        newWidth = initialWidth + (initialX - mouseX);
+        newHeight = mouseY - initialY;
+        newX = mouseX;
+        newY = initialY;
+        break;
+      case "bottomRight":
+        newWidth = mouseX - initialX;
+        newHeight = mouseY - initialY;
+        newX = initialX;
+        newY = initialY;
+        break;
+      default:
+        newWidth = initialWidth;
+        newHeight = initialHeight;
+        newX = initialX;
+        newY = initialY;
+        break;
+    }
+
+    //updateNewDimentions
+    selectedElement.setAttribute("width", newWidth);
+    selectedElement.setAttribute("height", newHeight);
+    selectedElement.setAttribute("x", newX);
+    selectedElement.setAttribute("y", newY);
+
+    const nodeIndex = nodes.findIndex((node) => node.node === selectedElement);
+    nodes[nodeIndex].x = newX;
+    nodes[nodeIndex].y = newY;
+    nodes[nodeIndex].width = newWidth;
+    nodes[nodeIndex].height = newHeight;
   }
+  if (selectedElement.nodeName == "circle") {
+    // Get the initial circle position and radius
+    const initialX = parseFloat(selectedElement.getAttribute("cx"));
+    const initialY = parseFloat(selectedElement.getAttribute("cy"));
+    const initialRadius = parseFloat(selectedElement.getAttribute("r"));
 
-  //updateNewDimentions
-  selectedRect.setAttribute("width", newWidth);
-  selectedRect.setAttribute("height", newHeight);
-  selectedRect.setAttribute("x", newX);
-  selectedRect.setAttribute("y", newY);
+    // Calculate the distance from the mouse position to the center of the circle
+    const distanceFromCenter = Math.sqrt(
+      Math.pow(mouseX - initialX, 2) + Math.pow(mouseY - initialY, 2)
+    );
 
-  const nodeIndex = nodes.findIndex((node) => node.node === selectedRect);
-  nodes[nodeIndex].x = newX;
-  nodes[nodeIndex].y = newY;
-  nodes[nodeIndex].width = newWidth;
-  nodes[nodeIndex].height = newHeight;
+    // Calculate the new circle radius based on the distance from the mouse position to the center
+    let newRadius = distanceFromCenter;
+
+    // Update the new circle radius
+    selectedElement.setAttribute("r", newRadius);
+
+    // updatingNodesDataArray
+    const nodeIndex = nodes.findIndex((node) => node.node === selectedElement);
+    nodes[nodeIndex].radius = newRadius;
+    nodes[nodeIndex].x = initialX;
+    nodes[nodeIndex].y = initialY;
+  }
 
   redrawSVGCanvas();
 }
