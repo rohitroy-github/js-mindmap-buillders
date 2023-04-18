@@ -1,0 +1,153 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap');
+
+body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.container {
+  width: calc(100vw); /* subtract left and right padding */
+  height: calc(100vh); /* subtract top and bottom padding */
+  padding: 10px;
+  box-sizing: border-box;
+  /* border: 1px solid black; */
+
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+}
+
+.leftCanvasBar {
+  display: flex;
+  width: 85%;
+  box-sizing: border-box;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+}
+
+#mainSVG {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  outline: 0;
+
+  background-image: linear-gradient(to right, black 0.1px, transparent 1px),
+    linear-gradient(to bottom, black 0.1px, transparent 1px);
+  background-size: 30px 30px;
+  background-position: 0 0, 0 0;
+}
+
+.rightSideBar {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  /* flex-wrap: wrap; */
+  border: 5px solid black;
+  width: 15%;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  box-sizing: border-box;
+}
+
+/* btns */
+
+.btn {
+  align-items: center;
+  padding: 5px;
+  border: 1px solid black;
+  margin: 5px;
+  width: 100%;
+  text-align: center;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.btn:hover {
+  background-color: rgb(219, 219, 219);
+}
+
+rect {
+  /* fill: white; */
+  stroke-width: 3;
+  position: absolute;
+  /* rx: 5px;
+  ry: 5px; */
+}
+
+rect:hover {
+  fill: red;
+  fill-opacity: 0.2;
+}
+
+circle {
+  /* fill: white; */
+  stroke: black;
+  stroke-width: 3;
+  cursor: move;
+  position: absolute;
+}
+
+circle:hover {
+  fill: red;
+  fill-opacity: 0.2;
+}
+
+line {
+  stroke-width: 5;
+  position: absolute;
+}
+
+line:hover {
+  stroke: red;
+}
+
+.block {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding-top: 5px;
+}
+
+.block div {
+  padding: 2px;
+}
+
+.rightSideBar p {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  padding: 0;
+  margin: 0;
+  font-size: 14px;
+}
+
+.addNodeBlock {
+  border: 1px solid black;
+  text-align: center;
+  margin: 5px;
+  padding: 5px;
+}
+
+.block .btn {
+  margin: 0;
+}
+
+/* colorPicker */
+
+.colorPicker {
+  padding: 0;
+}

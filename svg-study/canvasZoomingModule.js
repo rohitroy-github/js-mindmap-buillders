@@ -3,10 +3,10 @@ const leftCanvasBar = document.getElementById("leftCanvasBar");
 const leftCanvasBarWidth = leftCanvasBar.clientWidth;
 const leftCanvasBarHeight = leftCanvasBar.clientHeight;
 
+svg.setAttribute("viewBox", `0 0 ${leftCanvasBarWidth} ${leftCanvasBarHeight}`);
+
 let percentage = 100;
 document.getElementById("zoomPercentage").innerHTML = `${percentage}%`;
-
-svg.setAttribute("viewBox", `0 0 ${leftCanvasBarWidth} ${leftCanvasBarHeight}`);
 
 let viewBox = svg.viewBox.baseVal;
 const zoomFactor = 1.1; // How much to zoom in or out on each click or mousewheel movement
