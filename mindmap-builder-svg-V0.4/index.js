@@ -34,6 +34,7 @@ function addRect() {
     y: 50,
     width: 100,
     height: 60,
+    fillColor: null,
     shape: "rectangle",
   };
 
@@ -59,6 +60,7 @@ function addSquare() {
     y: 50,
     width: 60,
     height: 60,
+    fillColor: null,
     shape: "square",
   };
 
@@ -85,6 +87,7 @@ function addCircle() {
     x: 75,
     y: 75,
     radius: 30,
+    fillColor: null,
     shape: "circle",
   };
 
@@ -1002,15 +1005,18 @@ function elementResizingHandler(event) {
 
 const selectedColor = document.getElementById("selectColor");
 
-selectedColor.addEventListener("input", function () {
+selectedColor.addEventListener("input", handleColorChange);
+
+function handleColorChange() {
   if (isSelectedAndSelection.isSelected) {
     let element = isSelectedAndSelection.selectedElement;
-    // if (isSelectedAndSelection.selectedElement.nodeName === "line") {
-    //   element.setAttribute("stroke", selectedColor.value);
-    // } else {
-    element.setAttribute("fill", selectedColor.value);
-    // }
+    let selectedNode = nodes.find((node) => node.node === element);
+    if (selectedNode) {
+      element.setAttribute("fill", selectedColor.value);
+
+      selectedNode.fillColor = selectedColor.value;
+    }
   }
-});
+}
 
 // colorPickerModule : END
