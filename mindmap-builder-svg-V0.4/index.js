@@ -13,6 +13,12 @@ svg.addEventListener("mousemove", drag);
 svg.addEventListener("mouseup", stopDrag);
 // def : addEventListener END
 
+// keepingTrackOfWhatsSelected?
+let isSelectedAndSelection = {
+  isSelected: false,
+  selectedElement: null,
+};
+
 // def : addANewNode/Rect
 const addRectBtn = document.getElementById("addRect");
 addRectBtn.addEventListener("click", addRect);
@@ -154,6 +160,8 @@ function startDrag(event) {
       for (let i = 0; i < nodes.length; i++) {
         if (nodes[i].id === selection.id) {
           nodes[i].nodeSelected = "true";
+          isSelectedAndSelection.isSelected = true;
+          isSelectedAndSelection.selectedElement = event.target;
           break;
         }
       }
@@ -209,6 +217,8 @@ function startDrag(event) {
       for (let i = 0; i < nodes.length; i++) {
         if (nodes[i].id === selection.id) {
           nodes[i].nodeSelected = "true";
+          isSelectedAndSelection.isSelected = true;
+          isSelectedAndSelection.selectedElement = event.target;
           break;
         }
       }
@@ -226,6 +236,8 @@ function startDrag(event) {
     for (let i = 0; i < edges.length; i++) {
       if (edges[i].id === currentEdge.id) {
         edges[i].edgeSelected = "true";
+        isSelectedAndSelection.isSelected = true;
+        isSelectedAndSelection.selectedElement = event.target;
         break;
       }
     }
@@ -359,6 +371,9 @@ function stopDrag(event) {
 
 // code : function : deselectANode
 function deselect() {
+  isSelectedAndSelection.isSelected = false;
+  isSelectedAndSelection.selectedElement = null;
+
   if (selection && selection.nodeName === "rect") {
     console.log("deselect-fired-rect");
     for (let i = 0; i < nodes.length; i++) {
@@ -982,3 +997,20 @@ function elementResizingHandler(event) {
 }
 
 // resizingModules : END
+
+// colorPickerModule : START
+
+const selectedColor = document.getElementById("selectColor");
+
+selectedColor.addEventListener("input", function () {
+  if (isSelectedAndSelection.isSelected) {
+    let element = isSelectedAndSelection.selectedElement;
+    // if (isSelectedAndSelection.selectedElement.nodeName === "line") {
+    //   element.setAttribute("stroke", selectedColor.value);
+    // } else {
+    element.setAttribute("fill", selectedColor.value);
+    // }
+  }
+});
+
+// colorPickerModule : END

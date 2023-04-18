@@ -81,7 +81,7 @@ body {
 }
 
 rect {
-  fill: white;
+  /* fill: white; */
   stroke-width: 3;
   position: absolute;
   /* rx: 5px;
@@ -94,8 +94,8 @@ rect:hover {
 }
 
 circle {
-  fill: white;
-  /* stroke: black; */
+  /* fill: white; */
+  stroke: black;
   stroke-width: 3;
   cursor: move;
   position: absolute;
@@ -112,8 +112,7 @@ line {
 }
 
 line:hover {
-  fill: red;
-  fill-opacity: 0.2;
+  stroke: red;
 }
 
 .block {
@@ -145,4 +144,10 @@ line:hover {
 
 .block .btn {
   margin: 0;
+}
+
+/* colorPicker */
+
+.colorPicker {
+  padding: 0;
 }
