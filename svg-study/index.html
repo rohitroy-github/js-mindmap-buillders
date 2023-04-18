@@ -14,9 +14,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.2/d3.js"
     integrity="sha512-zRKBBpNSqd3HlqiugpmQjIVo5Xued2naSL1ColKZlOJBQWvvhzT8mDSeeHJ4KE6yeUX10PuscqkTDFeFARvvNA=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-  <script src="https://d3js.org/d3.v7.min.js"></script> <!-- Include D3.js library -->
-
 </head>
 
 <body>
@@ -26,7 +23,7 @@
     </div>
     <div class="rightSideBar">
       <!-- <div><button class="btn" id="addRectBtn">Add Node</button></div> -->
-      <div><button class="btn" id="addCircleBtn">Add Circle</button></div>
+      <div><button class="btn" id="drawRectBtn">Add Rect</button></div>
 
       <!-- <div><button class="btn" id="addEdge" >Add Edge</button></div> -->
       <div>
@@ -46,13 +43,32 @@
         </div> -->
       </div>
 
-      <div class="color-picker">
-        <!-- <div class="color-swatch"></div> -->
-        <input type="color" id="color-input" />
+      <!-- colorPicker -->
+      <div class="addNodeBlock">
+        <div>
+          <p>Select Color</p>
+        </div>
+        <div class="block">
+          <div> <button class="btn colorPicker">
+              <input type="color" id="selectColor" />
+            </button></div>
+        </div>
+      </div>
+
+      <!-- zoomingButtons -->
+      <div class="addNodeBlock">
+        <div>
+          <p>Resolution</p>
+        </div>
+        <div class="block">
+          <div> <button class="btn" id="zoomInBtn">+</button></div>
+          <div> <button class="btn" id="zoomPercentage"></button></div>
+          <div> <button class="btn" id="zoomOutBtn">-</button></div>
+        </div>
       </div>
 
     </div>
-    <script src="./colorPicker.js"></script>
+    <script src="./canvasZoomingModule.js"></script>
 </body>
 
 </html>
