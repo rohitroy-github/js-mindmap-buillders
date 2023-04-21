@@ -14,6 +14,15 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.2/d3.js"
     integrity="sha512-zRKBBpNSqd3HlqiugpmQjIVo5Xued2naSL1ColKZlOJBQWvvhzT8mDSeeHJ4KE6yeUX10PuscqkTDFeFARvvNA=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <!-- importingSnap -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/snap.svg/0.5.1/snap.svg-min.js"></script>
+
+  <!-- importingSvg -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/svg.js/3.1.1/svg.min.js"></script>
+
+  <!-- importingd3 -->
+  <script src="https://d3js.org/d3.v4.min.js"></script>
 </head>
 
 <body>
@@ -56,6 +65,50 @@
         </div>
       </div>
 
+      <!-- appendingShapes -->
+      <div class="addNodeBlock">
+        <div>
+          <p>Abstract Shapes</p>
+        </div>
+        <div class="block-col">
+          <div> <button id="append-button" class="btn">Add Shape</button>
+          </div>
+          <div>
+            <select id="shape-selection">
+              <option value="circle">Circle</option>
+              <option value="rectangle">Rectangle</option>
+              <option value="ellipse">Ellipse</option>
+              <option value="line">Line</option>
+              <option value="quad">Quad</option>
+              <option value="pentagon">Pentagon</option>
+              <option value="hexagon">Hexagon</option>
+              <option value="heptagon">Heptagon</option>
+              <option value="octagon">Octagon</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- appendingArrows -->
+      <div class="addNodeBlock">
+        <div>
+          <p>Arrows</p>
+        </div>
+        <div class="block-col">
+          <div> <button id="append-arrow" class="btn">Add Arrow</button>
+          </div>
+          <div>
+            <select id="arrow-selection">
+              <option value="rightArrow">Right Arrow</option>
+              <option value="leftArrow">Left Arrow</option>
+              <option value="upArrow">Up Arrow</option>
+              <option value="downArrow">Down Arrow</option>
+              <option value="boomerangArrow">Boomerang Arrow</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
       <!-- <div><button class="btn" id="addEdge" >Add Edge</button></div> -->
       <div>
         <button class="btn" id="deleteNode">Delete Node</button>
@@ -75,6 +128,7 @@
     </div>
   </div>
   <script src="index.js"></script>
+  <script src="appendingObjects.js"></script>
 </body>
 
 </html>

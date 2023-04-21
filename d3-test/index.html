@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <link rel="stylesheet" href="index.css" />
+  <title>D3 TEST</title>
+
+  <!-- importingSnap -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/snap.svg/0.5.1/snap.svg-min.js"></script>
+
+  <!-- importingSvg -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/svg.js/3.1.1/svg.min.js"></script>
+
+  <!-- importingd3 -->
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <div class="leftCanvasBar" id="leftCanvasBar">
+      <svg id="mainSVG"></svg>
+    </div>
+    <div class="rightSideBar">
+
+      <!-- appendingShapes -->
+      <button id="append-button" class="btn">Add Shape</button>
+      <select id="shape-selection">
+        <option value="circle">Circle</option>
+        <option value="rectangle">Rectangle</option>
+        <option value="ellipse">Ellipse</option>
+        <option value="line">Line</option>
+        <option value="quad">Quad</option>
+        <option value="pentagon">Pentagon</option>
+        <option value="hexagon">Hexagon</option>
+        <option value="heptagon">Heptagon</option>
+        <option value="octagon">Octagon</option>
+      </select>
+
+      <button id="append-arrow" class="btn">Add Arrow</button>
+      <select id="arrow-selection">
+        <option value="rightArrow">Right Arrow</option>
+        <option value="leftArrow">Left Arrow</option>
+        <option value="upArrow">Up Arrow</option>
+        <option value="downArrow">Down Arrow</option>
+        <option value="boomerangArrow">Boomerang Arrow</option>
+      </select>
+
+    </div>
+
+    <!-- <div>
+        <button class="btn" id="deleteNode">Delete Node</button>
+      </div> -->
+  </div>
+  </div>
+  <script src="./appendingShapes.js"></script>
+  <script src="./appendingArrows.js"></script>
+
+</body>
+
+</html>

@@ -1,5 +1,23 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap');
 
+/* symbols */
+
+#symbol-list {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+}
+
+.symbol {
+  cursor: pointer;
+  font-size: 24px;
+  margin: 0 10px;
+}
+
+.symbol:hover {
+  color: blue;
+}
+
 body {
   height: 100%;
   width: 100%;
@@ -30,10 +48,6 @@ body {
 
 #mainSVG {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
   width: 100%;
   height: 100%;
   outline: 0;
@@ -80,80 +94,6 @@ body {
   background-color: rgb(219, 219, 219);
 }
 
-rect {
-  /* fill: white; */
-  stroke-width: 3;
-  position: absolute;
-  /* rx: 5px;
-  ry: 5px; */
-}
-
-rect:hover {
-  fill: red;
-  fill-opacity: 0.2;
-}
-
-circle {
-  /* fill: white; */
-  stroke: black;
-  stroke-width: 3;
-  cursor: move;
-  position: absolute;
-}
-
-circle:hover {
-  fill: red;
-  fill-opacity: 0.2;
-}
-
-line {
-  stroke-width: 5;
-  position: absolute;
-}
-
-line:hover {
-  stroke: red;
-}
-
-.block {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  padding-top: 5px;
-}
-
-.block div {
-  padding: 2px;
-}
-
-.rightSideBar p {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 800;
-  padding: 0;
-  margin: 0;
-  font-size: 14px;
-}
-
-.addNodeBlock {
-  border: 1px solid black;
-  text-align: center;
-  margin: 5px;
-  padding: 5px;
-}
-
-.block .btn {
-  margin: 0;
-}
-
-/* colorPicker */
-
-.colorPicker {
-  padding: 0;
-}
-
-/* shapes */
-
 select {
   font-family: 'Montserrat', sans-serif;
   font-weight: 800;
@@ -163,14 +103,7 @@ select {
   font-size: 14px;
 }
 
-.block-col {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  /* padding-top: 5px; */
-}
-
-.block-col div {
-  display: flex;
+option {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
 }
